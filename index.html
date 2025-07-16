@@ -1,210 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Form Alat Keluar</title>
   <style>
-  body {
-    font-family: sans-serif;
-    padding: 20px;
-    max-width: 500px;
-    margin: auto;
-  }
-
-  h2 {
-    text-align: center;
-  }
-
-  label {
-    display: block;
-    margin-top: 15px;
-  }
-
-  input, textarea, button {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    box-sizing: border-box;
-  }
-
-  .alat-container .alat-item {
-    position: relative;
-    margin-top: 10px;
-  }
-
-  .alat-container .alat-item input {
-    width: 100%;
-    padding-right: 35px; /* ruang untuk tombol X */
-  }
-
-  .alat-container .alat-item button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 8px;
-  width: 20px;
-  height: 20px;
-  background: none;
-  border: none;
-  font-size: 18px;
-  line-height: 1;
-  text-align: center;
-  cursor: pointer;
-  color: #d00;
-  padding: 0;
-}
-
-
-  .alat-container .alat-item button:hover {
-    background-color: #f5f5f5;
-    border-radius: 3px;
-  }
-
-  .add-button {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 10px;
-  }
-
-  .add-button button {
-    width: auto;
-    padding: 5px 10px;
-    font-size: 20px;
-  }
-
-  #status {
-    margin-top: 15px;
-    font-weight: bold;
-  }
-
-  input::placeholder {
-    color: #999;
-    font-style: italic;
-  }
-</style>
-
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 500;
+      color: #444;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    input:disabled {
+      background-color: #f0f0f0;
+      color: #777;
+    }
+    .alat-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      position: relative;
+    }
+    .alat-container input {
+      flex: 1;
+      padding-right: 35px;
+    }
+    .alat-container button {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: none;
+      border: none;
+      color: red;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .add-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      background-color: #e0e0e0;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .submit-button {
+      margin-top: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 15px;
+      text-align: center;
+      color: green;
+    }
+  </style>
 </head>
 <body>
-  <h2>ALAT KELUAR</h2>
+  <div class="container">
+    <h2>ALAT KELUAR</h2>
+    <form id="alatForm">
+      <label>Nama</label>
+      <input type="text" name="nama" required />
 
-  <form id="alatForm">
-    <label>Nama
-      <input type="text" name="nama" required>
-    </label>
+      <label>Tanggal request</label>
+      <input type="text" id="tanggalRequest" disabled />
 
-    <label>Tanggal request</label>
-    <p id="tanggalRequest"></p>
-
-    <label>Range pemakaian</label>
-    <div style="display: flex; gap: 10px;">
-      <input type="date" name="tanggalMulai" required>
-      <input type="date" name="tanggalSelesai" required>
-    </div>
-
-    <label>Nama Project
-      <input type="text" name="namaProject" required>
-    </label>
-
-    <label>List Alat</label>
-    <div class="alat-container" id="alatList">
-      <div class="alat-item">
-        <input type="text" name="alat[]" placeholder="Contoh: Kamera Canon" required>
-        <button type="button" onclick="removeAlat(this)">×</button>
+      <label>Range pemakaian</label>
+      <div style="display: flex; gap: 10px">
+        <input type="date" name="tanggalMulai" required />
+        <input type="date" name="tanggalSelesai" required />
       </div>
-    </div>
-    <div class="add-button">
-      <button type="button" onclick="addAlat()">➕ Tambah</button>
-    </div>
 
-    <label>Foto Bukti (opsional)
-      <input type="file" id="fotoInput" accept="image/*">
-    </label>
+      <label>Nama Project</label>
+      <input type="text" name="namaProject" required />
 
-    <br>
-    <button type="submit">Submit</button>
-  </form>
+      <label>List Alat</label>
+      <div id="alatList"></div>
+      <button type="button" class="add-button" onclick="addAlat()">➕ Tambah</button>
 
-  <p id="status"></p>
+      <label>Foto Bukti (opsional)</label>
+      <input type="file" id="fotoInput" accept="image/*" />
 
- <script>
-  // Ganti dengan URL Web App dari Apps Script kamu
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNJZX3ApYuqWfRxiv30D08dUwu6nxSC-d1Y35yg1KL8SFCHfMoobzk1m5KFB92wfLO/exec";
+      <button class="submit-button" type="submit">Submit</button>
+      <p id="status"></p>
+    </form>
+  </div>
 
-  // Format tanggal + jam sekarang
-  const now = new Date();
-  const options = {
-    weekday: undefined,
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Asia/Jakarta",
-    hour12: false,
-  };
-  document.getElementById("tanggalRequest").innerText = now.toLocaleString("id-ID", options) + " WIB";
+  <script>
+    document.getElementById('tanggalRequest').value = new Date().toLocaleString('id-ID');
 
-  function addAlat() {
-    const div = document.createElement("div");
-    div.className = "alat-item";
-    div.innerHTML = `
-      <input type="text" name="alat[]" placeholder="Contoh: Tripod" required>
-      <button type="button" onclick="removeAlat(this)">×</button>
-    `;
-    document.getElementById("alatList").appendChild(div);
-  }
-
-  function removeAlat(btn) {
-    btn.parentElement.remove();
-  }
-
-  document.getElementById("alatForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const form = e.target;
-
-    const alatInputs = form.querySelectorAll('input[name="alat[]"]');
-    const listAlat = Array.from(alatInputs).map((input) => input.value);
-
-    let fotoBukti = "";
-    const fotoFile = document.getElementById("fotoInput").files[0];
-    if (fotoFile) {
-      const reader = new FileReader();
-      reader.onload = async function (event) {
-        fotoBukti = event.target.result;
-        await submitData();
-      };
-      reader.readAsDataURL(fotoFile);
-    } else {
-      await submitData();
+    function addAlat(value = '') {
+      const container = document.createElement('div');
+      container.className = 'alat-container';
+      container.innerHTML = `
+        <input type="text" name="alat[]" placeholder="Contoh: Tripod" value="${value}" required />
+        <button type="button" onclick="removeAlat(this)">×</button>
+      `;
+      document.getElementById('alatList').appendChild(container);
     }
 
-    async function submitData() {
-      const data = {
-        nama: form.nama.value,
-        tanggalMulai: form.tanggalMulai.value,
-        tanggalSelesai: form.tanggalSelesai.value,
-        namaProject: form.namaProject.value,
-        listAlat: listAlat,
-        fotoBukti: fotoBukti,
-        waktuRequest: now.toLocaleString("id-ID", options) + " WIB",
-      };
+    function removeAlat(button) {
+      button.parentElement.remove();
+    }
+
+    addAlat(); // Tambah satu kolom awal saat pertama kali dibuka
+
+    const form = document.getElementById('alatForm');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz.../exec'; // Ganti ini dengan yang baru jika diupdate
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
 
       try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: formData,
         });
-        document.getElementById("status").innerText = "✅ Data berhasil dikirim!";
-        form.reset();
-      } catch (err) {
-        console.error(err);
-        document.getElementById("status").innerText = "❌ Gagal mengirim data.";
-      }
-    }
-  });
-</script>
 
+        if (response.ok) {
+          document.getElementById('status').textContent = 'Terkirim ✅';
+          form.reset();
+          document.getElementById('alatList').innerHTML = '';
+          addAlat();
+        } else {
+          document.getElementById('status').textContent = 'Gagal mengirim 😕';
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById('status').textContent = 'Error saat mengirim 😞';
+      }
+    });
+  </script>
 </body>
 </html>

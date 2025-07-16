@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Form Alat Keluar</title>
+  <style>
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+  }
+
+  input, textarea, button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+  }
+
+  .alat-container .alat-item {
+    position: relative;
+    margin-top: 10px;
+  }
+
+  .alat-container .alat-item input {
+    width: 100%;
+    padding-right: 35px; /* ruang untuk tombol X */
+  }
+
+  .alat-container .alat-item button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  color: #d00;
+  padding: 0;
+}
+
+
+  .alat-container .alat-item button:hover {
+    background-color: #f5f5f5;
+    border-radius: 3px;
+  }
+
+  .add-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+  }
+
+  .add-button button {
+    width: auto;
+    padding: 5px 10px;
+    font-size: 20px;
+  }
+
+  #status {
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  input::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+</style>
+
+</head>
+<body>
+  <h2>ALAT KELUAR</h2>
+
+  <form id="alatForm">
+    <label>Nama
+      <input type="text" name="nama" required>
+    </label>
+
+    <label>Tanggal request</label>
+    <p id="tanggalRequest"></p>
+
+    <label>Range pemakaian</label>
+    <div style="display: flex; gap: 10px;">
+      <input type="date" name="tanggalMulai" required>
+      <input type="date" name="tanggalSelesai" required>
+    </div>
+
+    <label>Nama Project
+      <input type="text" name="namaProject" required>
+    </label>
+
+    <label>List Alat</label>
+    <div class="alat-container" id="alatList">
+      <div class="alat-item">
+        <input type="text" name="alat[]" placeholder="Contoh: Kamera Canon" required>
+        <button type="button" onclick="removeAlat(this)">×</button>
+      </div>
+    </div>
+    <div class="add-button">
+      <button type="button" onclick="addAlat()">➕ Tambah</button>
+    </div>
+
+    <label>Foto Bukti (opsional)
+      <input type="file" id="fotoInput" accept="image/*">
+    </label>
+
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="status"></p>
+
+ <script>
+  // Ganti dengan URL Web App dari Apps Script kamu
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNJZX3ApYuqWfRxiv30D08dUwu6nxSC-d1Y35yg1KL8SFCHfMoobzk1m5KFB92wfLO/exec";
+
+  // Format tanggal + jam sekarang
+  const now = new Date();
+  const options = {
+    weekday: undefined,
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Jakarta",
+    hour12: false,
+  };
+  document.getElementById("tanggalRequest").innerText = now.toLocaleString("id-ID", options) + " WIB";
+
+  function addAlat() {
+    const div = document.createElement("div");
+    div.className = "alat-item";
+    div.innerHTML = `
+      <input type="text" name="alat[]" placeholder="Contoh: Tripod" required>
+      <button type="button" onclick="removeAlat(this)">×</button>
+    `;
+    document.getElementById("alatList").appendChild(div);
+  }
+
+  function removeAlat(btn) {
+    btn.parentElement.remove();
+  }
+
+  document.getElementById("alatForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const form = e.target;
+
+    const alatInputs = form.querySelectorAll('input[name="alat[]"]');
+    const listAlat = Array.from(alatInputs).map((input) => input.value);
+
+    let fotoBukti = "";
+    const fotoFile = document.getElementById("fotoInput").files[0];
+    if (fotoFile) {
+      const reader = new FileReader();
+      reader.onload = async function (event) {
+        fotoBukti = event.target.result;
+        await submitData();
+      };
+      reader.readAsDataURL(fotoFile);
+    } else {
+      await submitData();
+    }
+
+    async function submitData() {
+      const data = {
+        nama: form.nama.value,
+        tanggalMulai: form.tanggalMulai.value,
+        tanggalSelesai: form.tanggalSelesai.value,
+        namaProject: form.namaProject.value,
+        listAlat: listAlat,
+        fotoBukti: fotoBukti,
+        waktuRequest: now.toLocaleString("id-ID", options) + " WIB",
+      };
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" },
+        });
+        document.getElementById("status").innerText = "✅ Data berhasil dikirim!";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("status").innerText = "❌ Gagal mengirim data.";
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

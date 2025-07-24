@@ -154,36 +154,29 @@
     }
 
     function handleSubmit(event) {
-      event.preventDefault();
+  event.preventDefault();
 
-      const form = document.getElementById("alatForm");
-      const formData = new FormData(form);
+  const form = document.getElementById("alatForm");
+  const formData = new FormData(form);
 
-      // Gabungkan semua input alat
-      const alatInputs = document.querySelectorAll('input[name="alat[]"]');
-      const listAlat = Array.from(alatInputs)
-        .map(input => input.value.trim())
-        .filter(val => val !== "")
-        .join(", ");
-      formData.append("listAlat", listAlat);
+  // Submit ke Google Apps Script
+  fetch("https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.text())
+  .then(data => {
+    alert("Berhasil dikirim!");
+    form.reset();
+    document.getElementById("alatContainer").innerHTML = "";
+    addAlat(); // Tambahkan satu field alat baru setelah reset
+    document.getElementById("tanggalRequest").value = new Date().toLocaleDateString("id-ID");
+  })
+  .catch(err => {
+    alert("Gagal mengirim data: " + err);
+  });
+}
 
-      // Submit ke Google Apps Script
-      fetch("https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(data => {
-        alert("Berhasil dikirim!");
-        form.reset();
-        document.getElementById("alatContainer").innerHTML = "";
-        addAlat(); // Tambahkan satu field alat baru setelah reset
-        document.getElementById("tanggalRequest").value = new Date().toLocaleDateString("id-ID");
-      })
-      .catch(err => {
-        alert("Gagal mengirim data: " + err);
-      });
-    }
   </script>
 </body>
 </html>

@@ -159,7 +159,21 @@
   const form = document.getElementById("alatForm");
   const formData = new FormData(form);
 
-  // Submit ke Google Apps Script
+  // Ambil semua input alat dan gabung jadi satu string
+  const alatInputs = document.querySelectorAll('input[name="alat[]"]');
+  const listAlat = Array.from(alatInputs)
+    .map(input => input.value.trim())
+    .filter(val => val !== "")
+    .join(", ");
+
+  // Tambahkan listAlat sebagai field baru
+  formData.append("listAlat", listAlat);
+
+  // Hapus semua field alat[] agar tidak dikirim satu-satu
+  alatInputs.forEach(input => {
+    formData.delete("alat[]");
+  });
+
   fetch("https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec", {
     method: "POST",
     body: formData
@@ -176,6 +190,7 @@
     alert("Gagal mengirim data: " + err);
   });
 }
+
 
   </script>
 </body>

@@ -129,7 +129,7 @@
 <img src="https://www.athleticacompany.com/wp-content/uploads/2024/07/Athletica-Company_White-left-1.png" alt="Logo" style="height: 20px;" />
     </div>
     <h2>Form Pengajuan Alat</h2>
-    <form id="alatForm">
+    <form id="alatForm" onsubmit="handleSubmit(event)">
       <label>Nama</label>
       <input type="text" name="nama" required />
 
@@ -157,6 +157,32 @@
   </div>
 
   <script>
+    function addAlat() {
+  const container = document.getElementById("alatContainer");
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "alat-item";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.name = "alat[]"; // penting!
+  input.required = true;
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.textContent = "❌";
+  removeBtn.onclick = () => wrapper.remove();
+
+  wrapper.appendChild(input);
+  wrapper.appendChild(removeBtn);
+  container.appendChild(wrapper);
+}
+
+window.onload = () => {
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("tanggalRequest").value = today;
+};
+    
     const scriptURL = 'https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec';
     const form = document.getElementById('alatForm');
     const alatContainer = document.getElementById('alatContainer');
@@ -213,6 +239,32 @@
           console.error(error);
         });
     });
+
+    function handleSubmit(event) {
+  event.preventDefault(); // Cegah reload halaman
+
+  const form = document.getElementById("alatForm");
+  const formData = new FormData(form);
+
+  // Isi tanggalRequest otomatis
+  const tanggalRequest = new Date().toLocaleDateString("id-ID");
+  formData.append("tanggalRequest", tanggalRequest);
+
+  fetch("https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec", {
+    method: "POST",
+    body: formData,
+  })
+  .then((res) => res.text())
+  .then((data) => {
+    alert("Berhasil dikirim!");
+    form.reset();
+    document.getElementById("alatContainer").innerHTML = ""; // Bersihkan input alat
+  })
+  .catch((err) => {
+    alert("Gagal kirim: " + err);
+  });
+}
+
   </script>
 </body>
 </html>

@@ -52,15 +52,6 @@
     }
 
     .alat-item {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  .alat-item input {
-    flex: 1;
-  }
-    .alat-item {
       position: relative;
       margin-bottom: 10px;
     }
@@ -126,15 +117,15 @@
 <body>
   <div class="container">
     <div class="logo">
-<img src="https://www.athleticacompany.com/wp-content/uploads/2024/07/Athletica-Company_White-left-1.png" alt="Logo" style="height: 20px;" />
+      <img src="https://www.athleticacompany.com/wp-content/uploads/2024/07/Athletica-Company_White-left-1.png" alt="Logo" style="height: 20px;" />
     </div>
     <h2>Form Pengajuan Alat</h2>
-    <form id="alatForm" onsubmit="handleSubmit(event)">
+    <form id="alatForm">
       <label>Nama</label>
       <input type="text" name="nama" required />
 
       <label>Tanggal Request</label>
-      <input type="text" id="tanggalRequest" class="form-control" readonly>
+      <input type="text" id="tanggalRequest" class="readonly" readonly>
 
       <label>Tanggal Mulai</label>
       <input type="date" name="tanggalMulai" required />
@@ -157,114 +148,70 @@
   </div>
 
   <script>
-    function addAlat() {
-  const container = document.getElementById("alatContainer");
+    const form = document.getElementById("alatForm");
+    const alatContainer = document.getElementById("alatContainer");
+    const scriptURL = "https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec";
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "alat-item";
-
-  const input = document.createElement("input");
-  input.type = "text";
-  input.name = "alat[]"; // penting!
-  input.required = true;
-
-  const removeBtn = document.createElement("button");
-  removeBtn.type = "button";
-  removeBtn.textContent = "❌";
-  removeBtn.onclick = () => wrapper.remove();
-
-  wrapper.appendChild(input);
-  wrapper.appendChild(removeBtn);
-  container.appendChild(wrapper);
-}
-
-window.onload = () => {
-  const today = new Date().toISOString().split("T")[0];
-  document.getElementById("tanggalRequest").value = today;
-};
-    
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec';
-    const form = document.getElementById('alatForm');
-    const alatContainer = document.getElementById('alatContainer');
-
-    // Auto-date
-    document.getElementById('tanggalRequest').value = new Date().toLocaleString('id-ID', {
-      weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
-
-    // Tambah field alat
-    function addAlat() {
-    const container = document.getElementById("alatContainer");
-
-    const div = document.createElement("div");
-    div.className = "alat-item";
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.className = "form-control";
-    input.placeholder = "Nama alat";
-    input.name = "alat[]";
-
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "btn btn-danger";
-    button.innerHTML = "✕";
-    button.onclick = function () {
-      container.removeChild(div);
+    // Set tanggal hari ini
+    window.onload = () => {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("tanggalRequest").value = today;
+      addAlat(); // Tambah satu default alat input
     };
 
-    div.appendChild(input);
-    div.appendChild(button);
-    container.appendChild(div);
-  }
+    // Fungsi tambah input alat
+    function addAlat() {
+      const div = document.createElement("div");
+      div.className = "alat-item";
 
-    // Tambah satu alat default saat load
-    window.onload = () => addAlat();
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = "alat[]";
+      input.placeholder = "Nama alat";
+      input.required = true;
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "✕";
+      button.onclick = () => div.remove();
+
+      div.appendChild(input);
+      div.appendChild(button);
+      alatContainer.appendChild(div);
+    }
+
+    // Kirim form
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
       const formData = new FormData(form);
 
-      fetch(scriptURL, { method: 'POST', body: formData })
-        .then(response => {
-          alert("Berhasil mengirim data!");
-          form.reset();
-          alatContainer.innerHTML = '';
-          addAlat();
-        })
-        .catch(error => {
-          alert("Gagal mengirim. Coba lagi atau cek koneksi.");
-          console.error(error);
-        });
+      // Ambil semua nilai input alat[]
+      const alatInputs = document.querySelectorAll('input[name="alat[]"]');
+      const alatList = Array.from(alatInputs)
+        .map(input => input.value.trim())
+        .filter(val => val !== "");
+      formData.set("alat[]", alatList.join(", ")); // replace jadi satu string
+
+      // Tambah tanggalRequest manual ke FormData (untuk backup)
+      const tanggalRequest = document.getElementById("tanggalRequest").value;
+      formData.set("tanggalRequest", tanggalRequest);
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: formData
+      })
+      .then(response => {
+        alert("Berhasil mengirim data!");
+        form.reset();
+        alatContainer.innerHTML = "";
+        addAlat();
+      })
+      .catch(error => {
+        alert("Gagal mengirim. Coba lagi atau cek koneksi.");
+        console.error(error);
+      });
     });
-
-    function handleSubmit(event) {
-  event.preventDefault(); // Cegah reload halaman
-
-  const form = document.getElementById("alatForm");
-  const formData = new FormData(form);
-
-  // Isi tanggalRequest otomatis
-  const tanggalRequest = new Date().toLocaleDateString("id-ID");
-  formData.append("tanggalRequest", tanggalRequest);
-
-  fetch("https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec", {
-    method: "POST",
-    body: formData,
-  })
-  .then((res) => res.text())
-  .then((data) => {
-    alert("Berhasil dikirim!");
-    form.reset();
-    document.getElementById("alatContainer").innerHTML = ""; // Bersihkan input alat
-  })
-  .catch((err) => {
-    alert("Gagal kirim: " + err);
-  });
-}
-
   </script>
 </body>
 </html>

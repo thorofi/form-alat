@@ -157,23 +157,31 @@
   event.preventDefault();
 
   const form = document.getElementById("alatForm");
-  const formData = new FormData(form);
 
-  // Ambil semua input alat dan gabung jadi satu string
+  // Buat FormData manual
+  const formData = new FormData();
+
+  formData.append("nama", form.nama.value);
+  formData.append("tanggalRequest", document.getElementById("tanggalRequest").value);
+  formData.append("tanggalMulai", form.tanggalMulai.value);
+  formData.append("tanggalSelesai", form.tanggalSelesai.value);
+  formData.append("namaProject", form.namaProject.value);
+
+  // Ambil semua input alat dan gabungkan
   const alatInputs = document.querySelectorAll('input[name="alat[]"]');
   const listAlat = Array.from(alatInputs)
     .map(input => input.value.trim())
     .filter(val => val !== "")
     .join(", ");
-
-  // Tambahkan listAlat sebagai field baru
   formData.append("listAlat", listAlat);
 
-  // Hapus semua field alat[] agar tidak dikirim satu-satu
-  alatInputs.forEach(input => {
-    formData.delete("alat[]");
-  });
+  // Tambahkan file jika ada
+  const fotoFile = form.fotoInput.files[0];
+  if (fotoFile) {
+    formData.append("fotoInput", fotoFile);
+  }
 
+  // Kirim ke Apps Script
   fetch("https://script.google.com/macros/s/AKfycbw5IAdzfbjM5_fs_1zh_Bif8R3GuEy8pVDYKucukUN-Ae_s4NzjXGL-x9Tv23tmh_i2/exec", {
     method: "POST",
     body: formData
@@ -183,14 +191,13 @@
     alert("Berhasil dikirim!");
     form.reset();
     document.getElementById("alatContainer").innerHTML = "";
-    addAlat(); // Tambahkan satu field alat baru setelah reset
+    addAlat();
     document.getElementById("tanggalRequest").value = new Date().toLocaleDateString("id-ID");
   })
   .catch(err => {
     alert("Gagal mengirim data: " + err);
   });
 }
-
 
   </script>
 </body>

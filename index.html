@@ -96,7 +96,8 @@
 </head>
 <body>
   <div class="container">
-    <h2>ALAT KELUAR</h2>
+    <img src="https://www.athleticacompany.com/wp-content/uploads/2024/07/Athletica-Company_White-left-1.png" alt="Logo" style="display:block; margin: 0 auto 10px; max-width: 120px;" />
+    <h2>FORM ALAT KELUAR</h2>
     <form id="alatForm">
       <label>Nama</label>
       <input type="text" name="nama" required />
@@ -142,33 +143,62 @@
       button.parentElement.remove();
     }
 
-    addAlat(); // Tambah satu kolom awal saat pertama kali dibuka
+    addAlat(); // kolom alat pertama
 
     const form = document.getElementById('alatForm');
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzNJZX3ApYuqWfRxiv30D08dUwu6nxSC-d1Y35yg1KL8SFCHfMoobzk1m5KFB92wfLO/exec'; // Ganti ini dengan yang baru jika diupdate
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxfmeVmxRsRVivBccqfrn6Cmfpx4U44YDRNP4q3z_KD4pHn9FXTJDDlWKIvVx9OaGWG/exec'; // ganti dengan URL deploy kamu
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const formData = new FormData(form);
 
-      try {
-        const response = await fetch(scriptURL, {
-          method: 'POST',
-          body: formData,
-        });
+      const alatList = [...document.querySelectorAll('input[name="alat[]"]')].map(input => input.value);
+      const fotoFile = document.getElementById('fotoInput').files[0];
+      let fotoBase64 = '';
 
-        if (response.ok) {
-          document.getElementById('status').textContent = 'Terkirim ✅';
-          form.reset();
-          document.getElementById('alatList').innerHTML = '';
-          addAlat();
-        } else {
-          document.getElementById('status').textContent = 'Gagal mengirim 😕';
+      if (fotoFile) {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          fotoBase64 = reader.result;
+
+          await sendData(fotoBase64);
+        };
+        reader.readAsDataURL(fotoFile);
+      } else {
+        await sendData('');
+      }
+
+      async function sendData(fotoString) {
+        const payload = {
+          nama: formData.get("nama"),
+          tanggalMulai: formData.get("tanggalMulai"),
+          tanggalSelesai: formData.get("tanggalSelesai"),
+          namaProject: formData.get("namaProject"),
+          listAlat: alatList,
+          fotoBukti: fotoString
+        };
+
+        try {
+          const response = await fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            document.getElementById('status').textContent = 'Terkirim ✅';
+            form.reset();
+            document.getElementById('alatList').innerHTML = '';
+            addAlat();
+          } else {
+            document.getElementById('status').textContent = 'Gagal mengirim 😕';
+          }
+        } catch (error) {
+          console.error(error);
+          document.getElementById('status').textContent = 'Error saat mengirim 😞';
         }
-      } catch (error) {
-        console.error(error);
-        document.getElementById('status').textContent = 'Error saat mengirim 😞';
       }
     });
   </script>

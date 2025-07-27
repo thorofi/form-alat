@@ -286,7 +286,7 @@ async function loadDaftarPeminjaman() {
     formData.append("namaProject", form.namaProject.value);
 
     // Gabungkan alat dari dropdown
-    const alatInputs = document.querySelectorAll('select[name="alat[]"]');
+    const alatInputs = document.querySelectorAll('select[name="listAlat"]');
     const listAlat = Array.from(alatInputs)
       .map(i => i.value.trim())
       .filter(val => val !== "")

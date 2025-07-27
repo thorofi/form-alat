@@ -6,6 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Form Alat Keluar</title>
   <style>
+
+    .loading-message {
+  display: none;
+  margin-top: 10px;
+  text-align: center;
+  color: #555;
+  font-style: italic;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
     body {
       font-family: Arial, sans-serif;
       max-width: 600px;
@@ -117,6 +131,7 @@
     <input type="file" name="fotoInput" accept="image/*" />
 
     <button type="submit" class="submit-btn" id="submitBtn">Kirim</button>
+    <div id="loadingMsg" class="loading-message">Mengirim data...</div>
   </form>
 
  <script>
@@ -154,9 +169,14 @@ function handleSubmit(event) {
   event.preventDefault();
 
   const form = document.getElementById("alatForm");
-  const formData = new FormData();
+  const submitBtn = form.querySelector(".submit-btn");
+  const loadingMsg = document.getElementById("loadingMsg");
 
-  // Isi data form ke FormData
+  // Tampilkan loading dan disable tombol
+  submitBtn.disabled = true;
+  loadingMsg.style.display = "block";
+
+  const formData = new FormData();
   formData.append("nama", form.nama.value);
   formData.append("tanggalRequest", document.getElementById("tanggalRequest").value);
   formData.append("tanggalMulai", form.tanggalMulai.value);
@@ -189,8 +209,14 @@ function handleSubmit(event) {
     })
     .catch(err => {
       alert("Gagal mengirim data: " + err);
+    })
+    .finally(() => {
+      // Sembunyikan loading dan enable tombol
+      submitBtn.disabled = false;
+      loadingMsg.style.display = "none";
     });
 }
+
 </script>
 </body>
 </html>

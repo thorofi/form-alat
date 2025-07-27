@@ -127,6 +127,9 @@ button:disabled {
   <img src="https://www.athleticacompany.com/wp-content/uploads/2024/07/Athletica-Company_White-left-1.png" alt="Logo" class="logo" />
 
   <h2>Form Pengajuan Alat Keluar</h2>
+  <h3>📋 Daftar Peminjaman Aktif</h3>
+<div id="daftarPeminjaman" style="margin-bottom: 20px;"></div>
+
 
   <form id="alatForm">
     <label>Nama</label>
@@ -165,13 +168,47 @@ button:disabled {
     "Lensa LUMIX tele",
     "Lensa LUMIX wide"
   ];
+async function loadDaftarPeminjaman() {
+  try {
+    const res = await fetch(
+      "https://script.google.com/macros/s/AKfycbxnkVzAJZGsqRl6d1oFxkW_saNhRYqxaZkfZ_QAWjS1XxgUlNF_OfiJ7q-vUw2zU0zM/exec"
+    );
+    const data = await res.json();
+
+    const container = document.getElementById("daftarPeminjaman");
+    container.innerHTML = "";
+
+    if (data.length === 0) {
+      container.innerHTML = "<p style='color:gray'>Tidak ada alat yang sedang dipinjam.</p>";
+      return;
+    }
+
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.style.padding = "10px";
+      card.style.marginBottom = "10px";
+      card.style.border = "1px solid #ccc";
+      card.style.borderRadius = "6px";
+      card.style.background = "#fff";
+
+      card.innerHTML = `
+        <strong>${item.nama}</strong><br>
+        <em>${item.tanggalMulai} - ${item.tanggalSelesai}</em><br>
+        <span>${item.listAlat}</span>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Gagal mengambil data peminjaman:", err);
+  }
+}
 
   document.addEventListener("DOMContentLoaded", () => {
     // Isi tanggal request saat halaman dibuka
     document.getElementById("tanggalRequest").value = new Date().toLocaleString("id-ID");
 
     // Tambahkan satu dropdown alat saat awal
-    addAlat();
+    addAlat(); loadDaftarPeminjaman();
 
     // Event submit form
     document.getElementById("alatForm").addEventListener("submit", handleSubmit);

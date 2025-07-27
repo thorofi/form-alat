@@ -6,7 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Form Alat Keluar</title>
   <style>
+.modern-select {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    width: 100%;
+    max-width: 300px;
+    transition: all 0.2s ease-in-out;
+  }
 
+  .modern-select:hover {
+    border-color: #888;
+  }
+
+  .modern-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
     .loading-message {
   display: none;
   margin-top: 10px;
@@ -165,6 +184,7 @@ button:disabled {
     const select = document.createElement("select");
     select.name = "alat[]";
     select.required = true;
+    select.className = "modern-select";
     updateDropdownOptions(select); // Isi opsi berdasarkan alat yang belum dipilih
 
     const removeBtn = document.createElement("button");

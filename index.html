@@ -286,7 +286,7 @@ async function loadDaftarPeminjaman() {
     formData.append("namaProject", form.namaProject.value);
 
     // Gabungkan alat dari dropdown
-    const alatInputs = document.querySelectorAll('select[name="listAlat"]');
+    const alatInputs = document.querySelectorAll('select[name="alat[]"]');
     const listAlat = Array.from(alatInputs)
       .map(i => i.value.trim())
       .filter(val => val !== "")
@@ -298,7 +298,9 @@ async function loadDaftarPeminjaman() {
     if (fileInput.files.length > 0) {
       formData.append("fotoInput", fileInput.files[0]);
     }
-
+for (let pair of formData.entries()) {
+  console.log(pair[0]+ ': ' + pair[1]);
+}
     // Kirim ke Apps Script
     fetch("https://script.google.com/macros/s/AKfycbzii90uJy6g0jD6tehwqwqlEYLii3oftoqLSgub5q9T4Zde4AePtPxA0nZZBjitkpIA/exec", {
       method: "POST",

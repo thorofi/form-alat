@@ -151,61 +151,46 @@
   }
 
 function handleSubmit(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const form = document.getElementById("alatForm");
+  const form = document.getElementById("alatForm");
+  const formData = new FormData();
 
-    const alatInputs = document.querySelectorAll('input[name="alat[]"]');
-    const listAlat = Array.from(alatInputs)
-      .map(i => i.value.trim())
-      .filter(Boolean)
-      .join(", ");
+  // Isi data form ke FormData
+  formData.append("nama", form.nama.value);
+  formData.append("tanggalRequest", document.getElementById("tanggalRequest").value);
+  formData.append("tanggalMulai", form.tanggalMulai.value);
+  formData.append("tanggalSelesai", form.tanggalSelesai.value);
+  formData.append("namaProject", form.namaProject.value);
 
-    if (!listAlat) {
-      alert("Minimal 1 alat harus diisi.");
-      return;
-    }
+  const alatInputs = document.querySelectorAll('input[name="alat[]"]');
+  const listAlat = Array.from(alatInputs)
+    .map(i => i.value.trim())
+    .filter(val => val !== "")
+    .join(", ");
+  formData.append("listAlat", listAlat);
 
-    const formData = new FormData();
-    formData.append("nama", form.nama.value);
-    formData.append("tanggalRequest", document.getElementById("tanggalRequest").value);
-    formData.append("tanggalMulai", form.tanggalMulai.value);
-    formData.append("tanggalSelesai", form.tanggalSelesai.value);
-    formData.append("namaProject", form.namaProject.value);
-    formData.append("listAlat", listAlat);
+  const fileInput = form.fotoInput;
+  if (fileInput.files.length > 0) {
+    formData.append("fotoInput", fileInput.files[0]);
+  }
 
-    // Tambahkan file jika ada
-    const foto = form.fotoInput.files[0];
-    if (foto) {
-      formData.append("fotoInput", foto);
-    }
-
-    // Disable tombol submit saat loading
-    const submitBtn = document.querySelector("button[type=submit]");
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Mengirim...";
-
-    fetch("https://script.google.com/macros/s/AKfycbxnkVzAJZGsqRl6d1oFxkW_saNhRYqxaZkfZ_QAWjS1XxgUlNF_OfiJ7q-vUw2zU0zM/exec", {
-      method: "POST",
-      body: formData // tidak perlu set headers!
-    })
+  fetch("https://script.google.com/macros/s/AKfycbxnkVzAJZGsqRl6d1oFxkW_saNhRYqxaZkfZ_QAWjS1XxgUlNF_OfiJ7q-vUw2zU0zM/exec", {
+    method: "POST",
+    body: formData
+  })
     .then(res => res.text())
     .then(data => {
       alert("Berhasil dikirim!");
       form.reset();
       document.getElementById("alatContainer").innerHTML = "";
-      addAlat(); // tambah 1 field alat baru
+      addAlat();
       document.getElementById("tanggalRequest").value = new Date().toLocaleDateString("id-ID");
-
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Kirim";
     })
     .catch(err => {
       alert("Gagal mengirim data: " + err);
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Kirim";
     });
-  }
+}
 </script>
 </body>
 </html>

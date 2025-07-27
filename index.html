@@ -166,7 +166,7 @@
   const listAlat = Array.from(alatInputs).map(i => i.value.trim()).join(", ");
   data.append("listAlat", listAlat);
 
-  fetch("URL_KAMU", {
+  fetch("https://script.google.com/macros/s/AKfycbxnkVzAJZGsqRl6d1oFxkW_saNhRYqxaZkfZ_QAWjS1XxgUlNF_OfiJ7q-vUw2zU0zM/exec", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",

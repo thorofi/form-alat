@@ -167,7 +167,7 @@
     try {
       // URL ini untuk mengambil data, tidak perlu diubah jika sudah berfungsi
       const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbx5lDOtQoSozBawYzPXL6nnY_e61zzi61a95LNO0T3f4GlAUsL-poem1lWLaLKdhrk/exec"
+        "https://script.google.com/macros/s/AKfycbzZPftoH8dykJsQxh0ylnZKYK2fvLuQSz2yCoGBP3mKsOtSyfBXkPkPY2ABz4RdBS43/exec"
       );
       const data = await res.json();
       const container = document.getElementById("daftarPeminjaman");
@@ -300,7 +300,7 @@
 
     // 4. Kirim ke Apps Script
     // !!! PENTING: Ganti URL di bawah dengan URL HASIL DEPLOYMENT BARU Anda !!!
-    fetch("https://script.google.com/macros/s/AKfycbx5lDOtQoSozBawYzPXL6nnY_e61zzi61a95LNO0T3f4GlAUsL-poem1lWLaLKdhrk/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbzZPftoH8dykJsQxh0ylnZKYK2fvLuQSz2yCoGBP3mKsOtSyfBXkPkPY2ABz4RdBS43/exec", {
       method: "POST",
       body: formData
     })
